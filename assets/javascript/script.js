@@ -8,7 +8,7 @@ window.onload = function () {
   var getGiphs = function(topic) {
     var url = 'https://api.giphy.com/v1/gifs/search?api_key=EU4CWjTbBYzh48LCPMWP7aXZBKdV2wAz';
     var q = '&q=' + topic;
-    var limit = '&limit=10';
+    var limit = '&limit=12';
     var finalUrl = url+q+limit;
 
     ajaxRequest(finalUrl)
@@ -27,16 +27,24 @@ window.onload = function () {
 
   var displayGiphs = function(data) {
     for (i = 0; i < data.length; i++) {
-      var img = $('<img>');
-      // var url = JSON.stringify(data[i].images.fixed_height_still.url);
-      // console.log(url)
+      var img = $(`<img class="card-img-top" src="" style="height: 200px;">`);
+      var newDiv = $('<div class="col-md-4"></div>')
+      var card = $(`
+        <div class="card m-2"">
+          <div class="card-body">
+            <p class="card-text text-center">Rating: ${data[i].rating.toUpperCase()}</p>
+          </div>
+        </div>`
+      );
+      card.prepend(img);
+      newDiv.append(card);
       img.attr('src', data[i].images.fixed_height_still.url);
-      $('.display-giphs').append(img)
+      $('.display-giphs').append(newDiv)
     }
   };
 
   //These words will be used to get giphs associated with them.
-  var topicsArray = ['Darth Vader','Donald Trump','The Lord of The Rings'];
+  var topicsArray = ['Luke Skywalker','Donald Trump','The Lord of The Rings'];
 
   //creates a button for each index in topicsArray
   var createButtons = function() {
@@ -58,17 +66,21 @@ window.onload = function () {
     //gets the value put into our input field
     var topic = $("#search-field").val().trim();
 
-    //adds that value to topicsArray
-    topicsArray.push(topic);
+    //checks if we have valid input
+    if (topic) {
+      
+      //adds that value to topicsArray
+      topicsArray.push(topic);
 
-    //removes our input from the screen
-    $("#search-field").val('');
+      //removes our input from the screen
+      $("#search-field").val('');
 
-    //removes the current buttons on the screen
-    $('.button-container').empty();
+      //removes the current buttons on the screen
+      $('.button-container').empty();
 
-    //re-adds the buttons to the screen with the new button
-    createButtons();
+      //re-adds the buttons to the screen with the new button
+      createButtons();
+    }
   });
 
 
