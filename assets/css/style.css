@@ -1,0 +1,11 @@
+.fa-star {
+  color: rgb(235, 235, 235);
+}
+
+.fa-star:hover {
+  cursor: pointer;
+}
+
+.favorite {
+  color: orange !important;
+}

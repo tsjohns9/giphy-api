@@ -41,8 +41,9 @@ window.onload = function () {
       //creates bs card component. Img gets prepended here.
       var card = $(`
         <div class="card m-2"">
-          <div class="card-body">
-            <p class="card-text text-center">Rating: ${data[i].rating.toUpperCase()}</p>
+          <div class="card-body text-center">
+            <p class="card-text">Rating: ${data[i].rating.toUpperCase()}</p>
+            <i class="fa fa-star"></i>
           </div>
         </div>
       `);
@@ -59,7 +60,11 @@ window.onload = function () {
       newDiv.append(card);
 
       //adds 12 images per page. Second page starts hidden
-      i < 12 ? $('.display-giphs').append(newDiv) : $('.display-giphs-2').append(newDiv);
+      if (i < 12) {
+          $('.display-giphs').append(newDiv);
+        } else {
+          $('.display-giphs-2').append(newDiv);
+      }
 
       //reveals next page button
       $('.page-nav').removeClass('d-none');
@@ -88,7 +93,7 @@ window.onload = function () {
     //checks if we have valid input
     if (topic) {
 
-      //adds that value to topicsArray
+      //adds value to topicsArray
       topicsArray.push(topic);
 
       //removes our input from the screen
@@ -151,6 +156,19 @@ window.onload = function () {
       $(this).addClass('active');
     }
   });
+
+
+  //tracks favorite giphs
+  $(document).on('click', '.fa-star', function() {
+
+    if ($(this).hasClass('favorite')) {
+      $(this).removeClass('favorite');
+    } else {
+      $(this).addClass('favorite');
+      $(this).parents('.col-md-4').clone().appendTo('.favorites');
+      console.log($('.favorites').children())
+    }
+  })
 
   //invokes our function to display the initial giph buttons
   createButtons();
