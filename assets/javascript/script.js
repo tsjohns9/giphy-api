@@ -3,6 +3,16 @@ window.onload = function () {
   //Buttons will be created from the strings in this array. The strings will be gif topics used in the ajax request.
   var topicsArray = ['Dodgeball', 'Star Wars', 'Anchorman', 'Spongebob', 'Indiana Jones', 'Pulp Fiction', 'Step Brothers', 'Zoolander', 'The Matrix', 'Elf', 'The Dark Knight', 'Harry Potter', 'The Lord of The Rings', 'Dumb And Dumber', 'The Big Lebowski', 'Wedding Crashers'];
 
+  //creates a button for each index in topicsArray
+  var createButtons = function () {
+    for (i = 0; i < topicsArray.length; i++) {
+      var newButton = $(`<button type="button" class="btn btn-dark m-2 mr-2 get-giphs">${topicsArray[i]}</button>`);
+
+      //adds to the new btn to the .button-container
+      $('.button-container').append(newButton);
+    }
+  };
+
   //Sets up our url to pass into ajaxRequest()
   var getGiphs = function(topic) {
     var url = 'https://api.giphy.com/v1/gifs/search?api_key=EU4CWjTbBYzh48LCPMWP7aXZBKdV2wAz';
@@ -13,7 +23,7 @@ window.onload = function () {
     ajaxRequest(finalUrl);
   };
 
-  //makes our ajax request based on the value of url.
+  //makes ajax request based on the value of url.
   var ajaxRequest = function(url) {
     console.log(url);
     $.ajax({
@@ -21,6 +31,7 @@ window.onload = function () {
       method: 'GET'
     }).then(function(response) {
       console.log(response.data);
+
       //passes our JSON response to displayGiphs to create HTML elements to display them
       displayGiphs(response.data);
     })
@@ -53,22 +64,17 @@ window.onload = function () {
       //adds our image to the page
       card.prepend(img);
       newDiv.append(card);
-      $('.display-giphs').append(newDiv);
+      
+      if (i < 12) {
+        $('.display-giphs').append(newDiv);
+      } else {
+        $('.display-giphs-2').append(newDiv);
+      }
 
       //reveals next page button
       $('.page-nav').removeClass('d-none');
     }
   };
-
-  //creates a button for each index in topicsArray
-  var createButtons = function() {
-    for (i = 0; i < topicsArray.length; i++) {
-      var newButton = $(`<button type="button" class="btn btn-dark m-2 mr-2 get-giphs">${topicsArray[i]}</button>`);
-
-      //adds to the new btn to the .button-container
-      $('.button-container').append(newButton);
-    }
-  }
 
   //invokes our function to display the initial giph buttons
   createButtons();
@@ -94,9 +100,12 @@ window.onload = function () {
     }
   });
 
+  //attached to all giph buttons. Gets our giphs
   $(document).on('click', '.get-giphs', function() {
+
     //removes giphs
     $('.display-giphs').empty();
+    $('.display-giphs-2').empty();
 
     //displays new giphs based on button
     getGiphs($(this).text());
@@ -115,5 +124,32 @@ window.onload = function () {
       $(this).attr('data-state', 'still');
       $(this).attr('src', $(this).attr('data-still'));
     }
-  })
+  });
+
+  //Switches between page 1 and 2 of the giphs.
+  $('.page-item').click(function() {
+
+    //checks what page we are on.
+    //if the element has a class of page-1, then the second page is active.
+    if ($(this).hasClass('page-1')) {
+
+      //reveals page 1. Hides page 2
+      $('.display-giphs').removeClass('d-none');
+      $('.display-giphs-2').addClass('d-none');
+
+      //sets active button appearance
+      $('.page-2').removeClass('active');
+      $(this).addClass('active');
+    } else {
+
+      //hides page 1. reveals page 2.
+      $('.display-giphs').addClass('d-none');
+      $('.display-giphs-2').removeClass('d-none');
+
+      //sets active button appearance
+      $('.page-1').removeClass('active');
+      $(this).addClass('active');
+    }
+  });
+
 }
