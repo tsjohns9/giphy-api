@@ -8,6 +8,8 @@ window.onload = function () {
     topicsArray.map(a => $('.button-container').append(`<button type="button" class="btn btn-dark m-2 mr-2 get-giphs">${a}</button>`));
   };
 
+  $('.all-favorites').hide();
+
   //Sets up our url to pass into ajaxRequest()
   var getGiphs = function (topic) {
     var url = 'https://api.giphy.com/v1/gifs/search?api_key=EU4CWjTbBYzh48LCPMWP7aXZBKdV2wAz';
@@ -41,8 +43,9 @@ window.onload = function () {
       //creates bs card component. Img gets prepended here.
       var card = $(`
         <div class="card m-2"">
-          <div class="card-body">
-            <p class="card-text text-center">Rating: ${data[i].rating.toUpperCase()}</p>
+          <div class="card-body text-center">
+            <p class="card-text">Rating: ${data[i].rating.toUpperCase()}</p>
+            <i class="fa fa-star"></i>
           </div>
         </div>
       `);
@@ -59,7 +62,11 @@ window.onload = function () {
       newDiv.append(card);
 
       //adds 12 images per page. Second page starts hidden
-      i < 12 ? $('.display-giphs').append(newDiv) : $('.display-giphs-2').append(newDiv);
+      if (i < 12) {
+        $('.display-giphs').append(newDiv);
+      } else {
+        $('.display-giphs-2').append(newDiv);
+      }
 
       //reveals next page button
       $('.page-nav').removeClass('d-none');
@@ -88,7 +95,7 @@ window.onload = function () {
     //checks if we have valid input
     if (topic) {
 
-      //adds that value to topicsArray
+      //adds value to topicsArray
       topicsArray.push(topic);
 
       //removes our input from the screen
@@ -106,6 +113,11 @@ window.onload = function () {
     //removes giphs
     $('.display-giphs').empty();
     $('.display-giphs-2').empty();
+
+    //hides our favorite giphs
+    if ($('.all-favorites').is(':visible')) {
+      $('.all-favorites').hide();
+    }
 
     //checks if page-2 is active when a new button is pressed. reveals page-1 if it is.
     if ($('.page-2').hasClass('active')) {
@@ -149,6 +161,46 @@ window.onload = function () {
       //sets active button appearance
       $('.page-1').removeClass('active');
       $(this).addClass('active');
+    }
+  });
+
+  //used to track favorite giphs.
+  var favUrls = [];
+
+  //tracks favorite giphs
+  $(document).on('click', '.fa-star', function () {
+    var giphUrl = $(this).parents('.col-md-4').find('.card-img-top').attr('data-still');
+
+    //checks if a giph is favorite or not
+    if ($(this).hasClass('orange-star')) {
+      $(this).removeClass('orange-star');
+
+      favUrls.splice(favUrls.indexOf(giphUrl),1)
+
+      $('.favorites').find(`.card-img-top[data-still="${giphUrl}"]`).parents('.col-md-4').remove();
+    } else {
+      $(this).addClass('orange-star');
+
+      //adds the favorite giph url to favUrls
+      if (!favUrls.includes(giphUrl)) {
+        favUrls.push(giphUrl);
+
+        $('.all-giphs').find(`.card-img-top[data-still="${giphUrl}"]`).parents('.col-md-4').clone().appendTo('.favorites');
+      }
+      
+    }
+
+    
+  })
+
+  $('.favorites-btn').click(function() {
+    if ($('.all-favorites').is(':hidden')) {
+
+      //removes giphs
+      $('.display-giphs').empty();
+      $('.display-giphs-2').empty();
+      $('.all-favorites').show();
+
     }
   });
 
