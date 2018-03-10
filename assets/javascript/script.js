@@ -5,25 +5,25 @@ window.onload = function () {
 
   //creates a button for each index in topicsArray to add to our button-container
   var createButtons = function () {
-    topicsArray.map( a => $('.button-container').append(`<button type="button" class="btn btn-dark m-2 mr-2 get-giphs">${a}</button>`) );
+    topicsArray.map(a => $('.button-container').append(`<button type="button" class="btn btn-dark m-2 mr-2 get-giphs">${a}</button>`));
   };
 
   //Sets up our url to pass into ajaxRequest()
-  var getGiphs = function(topic) {
+  var getGiphs = function (topic) {
     var url = 'https://api.giphy.com/v1/gifs/search?api_key=EU4CWjTbBYzh48LCPMWP7aXZBKdV2wAz';
     var q = '&q=' + topic;
     var limit = '&limit=24';
-    var finalUrl = url+q+limit;
+    var finalUrl = url + q + limit;
     ajaxRequest(finalUrl);
   };
 
   //makes ajax request based on the value of url.
-  var ajaxRequest = function(url) {
+  var ajaxRequest = function (url) {
     console.log(url);
     $.ajax({
       url: url,
       method: 'GET'
-    }).then(function(response) {
+    }).then(function (response) {
 
       //passes our JSON response to displayGiphs to create HTML elements for each giph
       displayGiphs(response.data);
@@ -31,7 +31,7 @@ window.onload = function () {
   };
 
   //creates our html elements for each gif.
-  var displayGiphs = function(data) {
+  var displayGiphs = function (data) {
     for (i = 0; i < data.length; i++) {
       var img = $(`<img class="card-img-top" src="" data-still="" data-animate="" data-state="still" style="height: 200px;">`);
 
@@ -41,9 +41,8 @@ window.onload = function () {
       //creates bs card component. Img gets prepended here.
       var card = $(`
         <div class="card m-2"">
-          <div class="card-body text-center">
-            <p class="card-text">Rating: ${data[i].rating.toUpperCase()}</p>
-            <i class="fa fa-star"></i>
+          <div class="card-body">
+            <p class="card-text text-center">Rating: ${data[i].rating.toUpperCase()}</p>
           </div>
         </div>
       `);
@@ -60,11 +59,7 @@ window.onload = function () {
       newDiv.append(card);
 
       //adds 12 images per page. Second page starts hidden
-      if (i < 12) {
-          $('.display-giphs').append(newDiv);
-        } else {
-          $('.display-giphs-2').append(newDiv);
-      }
+      i < 12 ? $('.display-giphs').append(newDiv) : $('.display-giphs-2').append(newDiv);
 
       //reveals next page button
       $('.page-nav').removeClass('d-none');
@@ -73,27 +68,27 @@ window.onload = function () {
 
   //Made this a function since the first page needs to be revealed when page-2 is clicked, and when a new giph button is clicked.
   //reveals the first page
-  var revealPage1 = function() {
+  var revealPage1 = function () {
 
-      //reveals page 1. Hides page 2
-      $('.display-giphs').removeClass('d-none');
-      $('.display-giphs-2').addClass('d-none');
+    //reveals page 1. Hides page 2
+    $('.display-giphs').removeClass('d-none');
+    $('.display-giphs-2').addClass('d-none');
 
-      //sets active button appearance
-      $('.page-2').removeClass('active');
-      $('.page-1').addClass('active');
+    //sets active button appearance
+    $('.page-2').removeClass('active');
+    $('.page-1').addClass('active');
   };
 
-  $('.btn-submit').click(function(e) {
+  $('.btn-submit').click(function (e) {
     e.preventDefault();
-    
+
     //gets the value put into our input field
     var topic = $("#search-field").val().trim();
 
     //checks if we have valid input
     if (topic) {
 
-      //adds value to topicsArray
+      //adds that value to topicsArray
       topicsArray.push(topic);
 
       //removes our input from the screen
@@ -106,7 +101,7 @@ window.onload = function () {
   });
 
   //attached to all giph buttons. Gets our giphs
-  $(document).on('click', '.get-giphs', function() {
+  $(document).on('click', '.get-giphs', function () {
 
     //removes giphs
     $('.display-giphs').empty();
@@ -122,7 +117,7 @@ window.onload = function () {
   });
 
   //switches between a still image and an animated image
-  $(document).on('click', '.card-img-top', function() {
+  $(document).on('click', '.card-img-top', function () {
 
     //data-state tells us the current state of the image. still or animated
     var state = $(this).attr('data-state')
@@ -138,7 +133,7 @@ window.onload = function () {
   });
 
   //Switches between page 1 and 2 of the giphs.
-  $('.page-item').click(function() {
+  $('.page-item').click(function () {
 
     //checks what page is active. if the element has a class of page-1, then the second page is active.
     if ($(this).hasClass('page-1')) {
@@ -156,19 +151,6 @@ window.onload = function () {
       $(this).addClass('active');
     }
   });
-
-
-  //tracks favorite giphs
-  $(document).on('click', '.fa-star', function() {
-
-    if ($(this).hasClass('favorite')) {
-      $(this).removeClass('favorite');
-    } else {
-      $(this).addClass('favorite');
-      $(this).parents('.col-md-4').clone().appendTo('.favorites');
-      console.log($('.favorites').children())
-    }
-  })
 
   //invokes our function to display the initial giph buttons
   createButtons();
