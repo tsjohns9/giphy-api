@@ -189,18 +189,14 @@ window.onload = function () {
       }
       
     }
-
-    
   })
 
+  //removes giphs, and shows favorites.
   $('.favorites-btn').click(function() {
     if ($('.all-favorites').is(':hidden')) {
-
-      //removes giphs
       $('.display-giphs').empty();
       $('.display-giphs-2').empty();
       $('.all-favorites').show();
-
     }
   });
 
