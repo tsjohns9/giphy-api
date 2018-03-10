@@ -169,22 +169,28 @@ window.onload = function () {
 
   //tracks favorite giphs
   $(document).on('click', '.fa-star', function () {
+
+    //finds the still giph url for the parent of the .fa-star that was clicked
     var giphUrl = $(this).parents('.col-md-4').find('.card-img-top').attr('data-still');
 
-    //checks if a giph is favorite or not
+    //checks if a giph is favorite or not. orange-star indicates a favorite giph
+    //If the giph is un-favorited, then the orange-star class is removed, and the giph is removed from .favorites
     if ($(this).hasClass('orange-star')) {
       $(this).removeClass('orange-star');
 
+      //removes favorite giph from favUrls.This allows the giph to be re-added if it is favorited again.
       favUrls.splice(favUrls.indexOf(giphUrl),1)
 
+      //removes giph from the .favorites div, which is revealed when the .favorites-btn is clicked
       $('.favorites').find(`.card-img-top[data-still="${giphUrl}"]`).parents('.col-md-4').remove();
     } else {
       $(this).addClass('orange-star');
 
-      //adds the favorite giph url to favUrls
+      //adds the favorite giph url to favUrls. Checks if it has already been added. Prevents duplicate giphs from being added
       if (!favUrls.includes(giphUrl)) {
         favUrls.push(giphUrl);
 
+        //searches the .all-giphs div for a giph that matches the url of the current giph, and then clones and appends it
         $('.all-giphs').find(`.card-img-top[data-still="${giphUrl}"]`).parents('.col-md-4').clone().appendTo('.favorites');
       }
       
