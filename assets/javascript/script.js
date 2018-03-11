@@ -22,11 +22,10 @@ window.onload = function () {
 
   //Sets up our url to pass into ajaxRequest(). the value of topic is passed in from the .get-giphs buttons
   var getGiphs = function (topic) {
-    var url = 'https://api.giphy.com/v1/gifs/search?api_key=EU4CWjTbBYzh48LCPMWP7aXZBKdV2wAz';
-    var q = '&q=' + topic;
-    var limit = '&limit=24';
-    var finalUrl = url + q + limit;
-    ajaxRequest(finalUrl);
+    
+    //replaces white space with a plus sign to work for the ajax request
+    topic = topic.split(' ').join('+');
+    ajaxRequest(`https://api.giphy.com/v1/gifs/search?api_key=EU4CWjTbBYzh48LCPMWP7aXZBKdV2wAz&q=${topic}&limit=24`);
   };
 
   //makes ajax request based on the value of url, which is passed in from the getGiphs function
@@ -104,8 +103,12 @@ window.onload = function () {
     //gets the user input
     var topic = $("#search-field").val().trim();
 
+    //checks if the button already exists by checking it against each element in topicsArray as all uppercase. If topic does not exist, then undefined is returned
+    var buttonExists = topicsArray.find( a => a.toUpperCase() === topic.toUpperCase() );
+    console.log(buttonExists)
+
     //checks if we have valid input. Does not create a new topic button if one already exists.
-    if (topic && !topicsArray.includes(topic)) {
+    if (topic && !buttonExists) {
 
       //adds value to topicsArray, which stores all strings used for buttons
       topicsArray.push(topic);
@@ -198,6 +201,7 @@ window.onload = function () {
       //removes giph from the .favorites div, which is revealed when the .favorites-btn is clicked
       findFavGiphUrl($('.favorites')).remove();
 
+      //if less than 2 elements exist in .favorites, then there are no favorite giphs. Displays message that there are no favorite giphs.
       if ($('.favorites').children().length < 2) {
         $('.favorites h3').removeClass('d-none');
       } 
@@ -215,7 +219,7 @@ window.onload = function () {
         //searches the .all-giphs div for a giph that matches the url of the current giph, and then clones and appends it
         findFavGiphUrl($('.all-giphs')).clone().appendTo('.favorites');
 
-        //checks if a favorite giph has been added yet since the .favorites class says "No Favorite Giphs!" before a giph is added
+        //checks if a favorite giph has been added since the .favorites class says "No Favorite Giphs!" before a giph is added
         if ($('.favorites').children().length > 1) {
           $('.favorites h3').addClass('d-none');
         } 
@@ -234,6 +238,11 @@ window.onload = function () {
 
       //reveals favorite giphs
       $('.all-favorites').show();
+    }
+
+    //removes the pages for the favorite giphs
+    if ($('.page-nav').is(':visible')) {
+      $('.page-nav').addClass('d-none');
     }
   });
 
